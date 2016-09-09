@@ -14,10 +14,10 @@ const lockScreenService = ($rootScope) => {
         buttonColor       : settings.buttonColor || '#F8F8F8',
         buttonTextColor   : settings.buttonTextColor || '#464646',
         buttonPressed     : settings.buttonPressed || '#E0E0E0',
-        buttonACColor     : settings.buttonACColor || "#F8F8F8",
-        buttonACTextColor : settings.buttonACTextColor || "#464646",
-        buttonDelColor    : settings.buttonDelColor || "#F8F8F8",
-        buttonDelTextColor: settings.buttonDelTextColor || "#464646"
+        buttonACColor     : settings.buttonACColor || '#F8F8F8',
+        buttonACTextColor : settings.buttonACTextColor || '#464646',
+        buttonDelColor    : settings.buttonDelColor || '#F8F8F8',
+        buttonDelTextColor: settings.buttonDelTextColor || '#464646',
       });
     },
   };
@@ -66,7 +66,7 @@ const lockScreenDirective = ($timeout) => {
         }, 50);
       });
       scope.all_clear = () => {
-        scope.enteredPasscode = "";
+        scope.enteredPasscode = '';
       };
       scope.delete = () => {
         scope.enteredPasscode = scope.enteredPasscode.slice(0,-1);
@@ -78,7 +78,14 @@ const lockScreenDirective = ($timeout) => {
         }
         scope.enteredPasscode += '' + digit;
         if (scope.enteredPasscode.length >= 4) {
-          if (scope.enteredPasscode === '' + scope.passcode) {
+          if (scope.passcode === '****'){
+            // Special mode where we allow SETTING the passcode
+            var enteredPasscode = scope.enteredPasscode;
+            scope.enteredPasscode = '';
+            passcodeAttempts = 0;
+            scope.onCorrect && scope.onCorrect(enteredPasscode);
+            scope._showLockScreen = false;
+          } else if (scope.enteredPasscode === '' + scope.passcode) {
             scope.enteredPasscode = '';
             passcodeAttempts = 0;
             scope.onCorrect && scope.onCorrect();
@@ -147,7 +154,7 @@ const lockScreenDirective = ($timeout) => {
             height: 60px;
           }
           .ILS_circle {
-            background-color: {{backgroundColor}}!important;
+            background-color: {{backgroundColor}};
             border-radius: 50%;
             width: 10px;
             height: 10px;
@@ -187,7 +194,7 @@ const lockScreenDirective = ($timeout) => {
             background-color: {{buttonDelColor}};
             }
           .ILS_full {
-            background-color:{{textColor}}!important;
+            background-color:{{textColor}};
           }
           .ILS_shake {
             -webkit-animation-name: ILS_shake;
