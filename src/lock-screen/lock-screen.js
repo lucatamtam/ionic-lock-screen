@@ -3,7 +3,8 @@ const lockScreenService = ($rootScope) => {
     show(settings) {
       $rootScope.$broadcast('ionic-lock-screen:show', {
         touchId           : settings.touchId || false,
-        ACDelbuttons      : settings.ACDelbuttons || false,
+        ACButton          : settings.ACButton || false,
+        DelButton         : settings.DelButton || false,
         passcode          : settings.code,
         onCorrect         : settings.onCorrect || null,
         onWrong           : settings.onWrong || null,
@@ -18,6 +19,7 @@ const lockScreenService = ($rootScope) => {
         buttonACTextColor : settings.buttonACTextColor || '#464646',
         buttonDelColor    : settings.buttonDelColor || '#F8F8F8',
         buttonDelTextColor: settings.buttonDelTextColor || '#464646',
+        logoUrl           : settings.logoUrl,
       });
     },
   };
@@ -32,7 +34,8 @@ const lockScreenDirective = ($timeout) => {
       scope.enteredPasscode = '';
       scope.$on('ionic-lock-screen:show', (e, data) => {
         scope._showLockScreen   = true;
-        scope.ACDelbuttons      = data.ACDelbuttons;
+        scope.ACButton          = data.ACButton;
+        scope.DelButton         = data.DelButton;
         scope.passcode          = data.passcode;
         scope.onCorrect         = data.onCorrect;
         scope.onWrong           = data.onWrong;
@@ -46,7 +49,8 @@ const lockScreenDirective = ($timeout) => {
         scope.buttonACColor     = data.buttonACColor;
         scope.buttonACTextColor = data.buttonACTextColor;
         scope.buttonDelColor    = data.buttonDelColor;
-        scope.buttonDelTextColor=data.buttonDelTextColor;
+        scope.buttonDelTextColor= data.buttonDelTextColor;
+        scope.logoUrl           = data.logoUrl;
         $timeout(() => {
           if (data.touchId && window.touchid) {
             window.touchid.checkSupport(() => {
@@ -97,7 +101,7 @@ const lockScreenDirective = ($timeout) => {
             $timeout(() => {
               scope.enteredPasscode = '';
               scope.passcodeWrong = false;
-            }, 800);
+            }, 600);
           }
         }
       };
@@ -171,13 +175,19 @@ const lockScreenDirective = ($timeout) => {
           .ILS_digit {
             margin: 0 14px;
             width: 80px;
-            border-radius: 10%;
+            border-radius: 99%;
+            border: 1px solid {{buttonTextColor}};
             height: 80px;
             text-align: center;
             padding-top: 29px;
             font-size: 21px;
             color: {{buttonTextColor}};
             background-color: {{buttonColor}};
+          }
+          .ILS_digit_hiden {
+            margin: 0 14px;
+            width: 80px;
+            height: 80px;
           }
           .ILS_digit.activated {
             -webkit-animation-name: ILS_buttonPress;
@@ -191,10 +201,21 @@ const lockScreenDirective = ($timeout) => {
             }
           .ILS_del {
             color: {{buttonDelTextColor}};
+            font-size: 30px;
             background-color: {{buttonDelColor}};
+            border: none;
+            padding-top: 24px;
             }
           .ILS_full {
             background-color:{{textColor}};
+          }
+          .ILS_logo {
+            height: 70px;
+            width: 100%;
+            text-align: center;
+          }
+          .ILS_logo img {
+            max-height: 50px;
           }
           .ILS_shake {
             -webkit-animation-name: ILS_shake;
@@ -206,6 +227,9 @@ const lockScreenDirective = ($timeout) => {
           }
       </style>
       <div class="ILS_lock" ng-class="!_showLockScreen ?  'ILS_lock-hidden' : ''">
+        <div class="ILS_logo">
+          <img ng-src="{{logoUrl}}" />
+        </div>
         <div class="ILS_label-row">
           {{passcodeLabel}}
         </div>
@@ -231,9 +255,11 @@ const lockScreenDirective = ($timeout) => {
           <div ng-click="digit(9)" class="ILS_digit">9</div>
         </div>
         <div class="ILS_numbers-row">
-          <div ng-show="ACDelbuttons" ng-click="all_clear()" class="ILS_digit ILS_ac">AC</div>
+          <div ng-show="!ACButton" class="ILS_digit_hiden"></div>
+          <div ng-show="ACButton" ng-click="all_clear()" class="ILS_digit ILS_ac">AC</div>
           <div ng-click="digit(0)" class="ILS_digit">0</div>
-          <div ng-show="ACDelbuttons" ng-click="delete()" class="ILS_digit ILS_del">DEL</div>
+          <div ng-show="!DelButton" class="ILS_digit_hiden"></div>
+          <div ng-show="DelButton" ng-click="delete()" class="ILS_digit ILS_del"><i class="icon ion-backspace"></i></div>
         </div>
       </div>
     `,
