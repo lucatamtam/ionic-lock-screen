@@ -25,7 +25,7 @@ const lockScreenService = ($rootScope) => {
   };
 };
 
-const lockScreenDirective = ($timeout) => {
+const lockScreenDirective = ($timeout, sha256) => {
   return {
     restrict: 'E',
     scope : {},
@@ -89,7 +89,7 @@ const lockScreenDirective = ($timeout) => {
             passcodeAttempts = 0;
             scope.onCorrect && scope.onCorrect(enteredPasscode);
             scope._showLockScreen = false;
-          } else if (scope.enteredPasscode === '' + scope.passcode) {
+          } else if (sha256(scope.enteredPasscode) === scope.passcode) {
             scope.enteredPasscode = '';
             passcodeAttempts = 0;
             scope.onCorrect && scope.onCorrect();
@@ -289,6 +289,7 @@ const lockScreenDirective = ($timeout) => {
   };
 };
 
-angular.module('ionic-lock-screen', []);
+angular.module('sha256', []).constant('sha256', window.sha256);
+angular.module('ionic-lock-screen', ['sha256']);
 angular.module('ionic-lock-screen').directive('lockScreen', lockScreenDirective);
 angular.module('ionic-lock-screen').service('$lockScreen', lockScreenService);
