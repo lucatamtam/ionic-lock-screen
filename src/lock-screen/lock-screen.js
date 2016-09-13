@@ -137,6 +137,7 @@ const lockScreenDirective = ($timeout) => {
             width: 100%;
             height: 100%;
             z-index: 999;
+            padding-top: 20px; /* status bar */
             background-color: {{backgroundColor}};
           }
           .ILS_lock-hidden {
@@ -224,6 +225,28 @@ const lockScreenDirective = ($timeout) => {
             animation-duration: 0.5s;
             -webkit-animation-fill-mode: both;
             animation-fill-mode: both;
+          }
+          @media screen and (max-device-height: 568px) {
+            .ILS_digit {
+              width: 70px;
+              height: 70px;
+              padding-top: 24px;
+            }
+            .ILS_numbers-row {
+              height: 90px;
+            }
+            .ILS_circles-row {
+              height: 40px;
+            }
+            .ILS_logo {
+              height: 60px;
+            }
+          }
+          @media screen and (max-device-height: 480px) {
+            .ILS_logo {
+              display: none;
+              height: 0px;
+            }
           }
       </style>
       <div class="ILS_lock" ng-class="!_showLockScreen ?  'ILS_lock-hidden' : ''">
