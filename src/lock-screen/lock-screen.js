@@ -20,6 +20,7 @@ const lockScreenService = ($rootScope) => {
         buttonDelColor    : settings.buttonDelColor || '#F8F8F8',
         buttonDelTextColor: settings.buttonDelTextColor || '#464646',
         logoUrl           : settings.logoUrl,
+        maxPasscodeAttemps: settings.maxPasscodeAttemps || 3,
       });
     },
   };
@@ -51,6 +52,7 @@ const lockScreenDirective = ($timeout, sha256) => {
         scope.buttonDelColor    = data.buttonDelColor;
         scope.buttonDelTextColor= data.buttonDelTextColor;
         scope.logoUrl           = data.logoUrl;
+        scope.maxPasscodeAttemps= data.maxPasscodeAttemps;
         $timeout(() => {
           if (data.touchId && window.touchid) {
             window.touchid.checkSupport(() => {
@@ -98,6 +100,9 @@ const lockScreenDirective = ($timeout, sha256) => {
             scope.passcodeWrong = true;
             passcodeAttempts++;
             scope.onWrong && scope.onWrong(passcodeAttempts);
+            if(passcodeAttempts >= scope.maxPasscodeAttemps) {
+              scope._showLockScreen = false;
+            }
             $timeout(() => {
               scope.enteredPasscode = '';
               scope.passcodeWrong = false;
